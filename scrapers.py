@@ -99,10 +99,18 @@ def scrape_cinepolis():
 			mov = re.split(' Dig | 4DX', movie)[0]
 			try:
 				flav = re.split(' Dig | 4DX', movie)[1]
+				print(flav)
 			except IndexError:
+				print('indexerror '+flav)
 				continue
 			
-			payload[theater][mov][flav] = []
+			try:
+				#payload[theater][mov] = {}
+				payload[theater][mov][flav] = []
+			except KeyError:
+				payload[theater][mov] = {}
+				payload[theater][mov][flav] = []
+
 			#print(ismoviename.contents[0])
 		elif ismovietime:
 			time = ismovietime.contents[0]
