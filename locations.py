@@ -31,3 +31,10 @@ cinestar = {
 	'Bahia',
 	'Pucallpa'
 }
+
+movietime = {
+	'MegaPlaza-Express-Villa',
+	'MegaPlaza-Villa-El-Salvador',
+	'Chincha',
+	'Canete'
+}

@@ -150,8 +150,11 @@ def scrape_cinerama(cinemacode): #accepts 1-7 as character
 
 	return payload
 
-def scrape_cinestar(location):
-	url = 'http://www.cinestar.com.pe/multicines/cine/'+location
+def scrape_cinestar_or_movietime(chain,location):
+	if chain == 'cinestar':
+		url = 'http://www.cinestar.com.pe/multicines/cine/'+location
+	elif chain == 'movietime':
+		url = "http://www.movietime.com.pe/multicines/cine/"+location
 	r = requests.get(url).text
 	page = BeautifulSoup(r)
 	payload = {}
@@ -162,24 +165,68 @@ def scrape_cinestar(location):
 	payload[theater]['address'] = theateradd
 	payload[theater]['phone'] = theaterphone
 	payload[theater]['movies'] = {}
-
-	container = page.find('div',{'class','programacion_'})
+	flavors = {" (Doblada)": '(DOB)',
+				" (Subtitulada)": "(SUB)",
+				" 3D (Doblada)": "3D (DOB)",
+				" 3D (Subtitulada)": "3D (SUB)",
+				" (HD - Subtitulada)": "(SUB)",
+				" (HD - Doblada)": "(DOB)"}
+	container = page.find_all('div',{'class','programacion_'})[1]
 	movies = container.find_all('a')
 	for movie in movies:
 		mtitle = movie.contents[0]
+
 		times = movie.findParent('tr').find_all('td')[1].contents[0]
-		isdubbed = mtitle.split("Doblada")[0]
-		issubbed = mtitle.split("Subtitulada")[0]
-		if not "(Subtitulada)" in isdubbed:
-			payload[theater]['movies'][isdubbed] = {}
-			payload[theater]['movies'][isdubbed]['(DOB)'] = times.split('/')
-		if not  "(Doblada)"  in issubbed:
-			payload[theater]['movies'][issubbed] = {}
-			payload[theater]['movies'][issubbed]['(SUB)'] = times.split('/')
-	
-	
-	#payload[theater]['movies'][mtitle] = {}
+
+		for key in flavors:
+			if key in mtitle:
+				fixtitle = mtitle.split(key)[0]
+				payload[theater]['movies'][fixtitle] = {}
+				payload[theater]['movies'][fixtitle][flavors[key]] = times.split('/')
 
 	return payload
+
+def scrape_uvk(location):
+	url = 'http://www.uvkmulticines.com/multicines/cine/'+location
+	r = requests.get(url).text
+	
+	page = BeautifulSoup(r)
+	payload = {}
+	theateradd = page.find_all('p')[2].contents[0]
+	theaterphone = page.find_all('p')[3].contents[0]
+	flavors = {" (Doblada)": '(DOB)',
+				" (Subtitulada)": "(SUB)",
+				" 3D (Doblada)": "3D (DOB)",
+				" 3D (Subtitulada)": "3D (SUB)",
+				" (HD - Subtitulada)": "(SUB)",
+				" (HD - Doblada)": "(DOB)"}
+	container = page.find('div', {'class','highslide-body'})
+	theater = container.find('h3').contents[0].split('-')[0]
+	payload[theater] = {}
+	payload[theater]['address'] = theateradd
+	payload[theater]['phone'] = theaterphone
+	payload[theater]['movies'] = {}
+	movies = container.find_all('a')
+	for movie in movies:
+		mtitle = movie.contents[0].replace('Estreno - ','')
+		times = movie.findParent('tr').find_all('td')[1].contents[0].split('/')
+		possibletitle = []
+		for key in flavors:
+			if key in mtitle:
+				fixtitle = mtitle.split(key)[0]
+				possibletitle.append([fixtitle,flavors[key]])
+		if len(possibletitle) == 0:
+			possibletitle.append([mtitle,''])
+		for candidate in possibletitle:
+			if len(possibletitle) > 1:
+				possibletitle = [possibletitle[len(possibletitle)-1]]
+		try:
+			payload[theater]['movies'][possibletitle[0][0]][possibletitle[0][1]] = times
+		except KeyError:
+			payload[theater]['movies'][possibletitle[0][0]] = {}
+			payload[theater]['movies'][possibletitle[0][0]][possibletitle[0][1]] = times
+	return payload
+	#return payload
+
 
 

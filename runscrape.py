@@ -25,7 +25,9 @@ def nicePrint(data):
 for loc in cinestar:
 	nicePrint(scrape_cinestar(loc))"""
 
-nicePrint(scrape_cinestar('Metro-San-Juan'))
+#nicePrint(scrape_cinestar_or_movietime('cinestar', 'Metro-UNI'))
 
+#nicePrint(scrape_uvk('UVK-LARCOMAR'))
+print(scrape_uvk('UVK-LARCOMAR'))
 #end = time.clock()
 #print(end - start)
