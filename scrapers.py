@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import re
+import datetime
 
 
 
@@ -123,12 +124,62 @@ def scrape_cinepolis():
 				continue
 			#print(ismovietime.contents)
 		
-	print(payload)
-	#theaters = page.find_all('span', {'class', 'TitulosBlanco'})
-	#for theater in theaters:
-	#	holder = theater.find_parent('table')
-	#	print(holder)
-	#return theaters
+	return payload
 
+def scrape_cinerama(cinemacode): #accepts 1-7 as character
+	url = 'http://www.cinerama.com.pe/detalle-cine.php?fk='+cinemacode
+	r = requests.get(url).text
+	page = BeautifulSoup(r)
+	payload = {}
+	day = datetime.datetime.now().weekday()
+	theater = page.find('p',{'class', 'dtit'}).contents[0]
+	payload[theater] = {}
+	containers = page.find_all('div', {'class', 'programa-des'})
+	for cont in containers:
+		title = cont.find('p',{'class','ptit2'}).find('a').contents[0]
+		payload[theater][title] = []
+		times = cont.find_all('tr')
+		for t in times:
+			if t.find_all('span'):
+				pass
+			elif t.find_all('td')[day].contents[0] == u'\xa0':
+				pass
+			else:
+				show = t.find_all('td')[day].contents
+				payload[theater][title].append(show[0])
+
+	return payload
+
+def scrape_cinestar(location):
+	url = 'http://www.cinestar.com.pe/multicines/cine/'+location
+	r = requests.get(url).text
+	page = BeautifulSoup(r)
+	payload = {}
+	theater = page.find('span', {'class','titley'}).contents[0]
+	payload[theater] = {}
+	theateradd = page.find('div', {'id','content-internas'}).find('p').contents[0]
+	theaterphone = page.find('div', {'id','content-internas'}).find_all('p')[1].contents[0]
+	payload[theater]['address'] = theateradd
+	payload[theater]['phone'] = theaterphone
+	payload[theater]['movies'] = {}
+
+	container = page.find('div',{'class','programacion_'})
+	movies = container.find_all('a')
+	for movie in movies:
+		mtitle = movie.contents[0]
+		times = movie.findParent('tr').find_all('td')[1].contents[0]
+		isdubbed = mtitle.split("Doblada")[0]
+		issubbed = mtitle.split("Subtitulada")[0]
+		if not "(Subtitulada)" in isdubbed:
+			payload[theater]['movies'][isdubbed] = {}
+			payload[theater]['movies'][isdubbed]['(DOB)'] = times.split('/')
+		if not  "(Doblada)"  in issubbed:
+			payload[theater]['movies'][issubbed] = {}
+			payload[theater]['movies'][issubbed]['(SUB)'] = times.split('/')
+	
+	
+	#payload[theater]['movies'][mtitle] = {}
+
+	return payload
 
 
