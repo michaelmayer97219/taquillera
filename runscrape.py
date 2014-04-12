@@ -5,6 +5,7 @@ from locations import *
 from scrapers import *
 import json
 import time
+import pickle
 #start = time.clock()
 
 def nicePrint(data):
@@ -27,7 +28,10 @@ for loc in cinestar:
 
 #nicePrint(scrape_cinestar_or_movietime('cinestar', 'Metro-UNI'))
 
-#nicePrint(scrape_uvk('UVK-LARCOMAR'))
-print(scrape_uvk('UVK-LARCOMAR'))
+nicePrint(scrape_uvk('UVK-LARCOMAR'))
+#print(type(scrape_uvk('UVK-LARCOMAR')))
+#print(scrape_uvk('UVK-LARCOMAR'))
 #end = time.clock()
 #print(end - start)
+
+#pickle.dump(scrape_uvk('UVK-LARCOMAR'), open('info.p', 'wb'))

@@ -10,7 +10,7 @@ import datetime
 
 def scrape_cinemark(theater):
 	url = 'http://www.cinemark-peru.com/cines/'+theater
-	r = requests.get(url).text
+	r = requests.get(url).text.encode('latin-1')
 	page = BeautifulSoup(r)
 	representation = {theater: {}}
 	#find movie blocks
@@ -51,7 +51,7 @@ def scrape_cinemark(theater):
 
 def scrape_cineplanet(theater_code):
 	url = 'http://www.cineplanet.com.pe/nuestroscines.php?complejo='+theater_code
-	r = requests.get(url).decode('latin-1').text
+	r = requests.get(url).text.encode('latin-1')
 	page = BeautifulSoup(r, from_encoding='latin-1')
 	theatername = page.find_all('td', {'class', "titulo_pelicula2"})[0].contents[0]
 	#site gives garbage so split at first word then add back in
@@ -78,7 +78,7 @@ def scrape_cineplanet(theater_code):
 #function for scraping cinepolis. all theaters on same page
 def scrape_cinepolis():
 	url = 'http://www.cinepolis.com.pe/_CARTELERA/cartelera.aspx?ic=100'
-	r = requests.get(url).text
+	r = requests.get(url).text.encode('latin-1')
 	page = BeautifulSoup(r)
 
 	bigcontainer = page.find('span', {'class', 'TitulosBlanco'}).find_parent('div')
@@ -128,7 +128,7 @@ def scrape_cinepolis():
 
 def scrape_cinerama(cinemacode): #accepts 1-7 as character
 	url = 'http://www.cinerama.com.pe/detalle-cine.php?fk='+cinemacode
-	r = requests.get(url).text
+	r = requests.get(url).text.encode('latin-1')
 	page = BeautifulSoup(r)
 	payload = {}
 	day = datetime.datetime.now().weekday()
@@ -155,7 +155,7 @@ def scrape_cinestar_or_movietime(chain,location):
 		url = 'http://www.cinestar.com.pe/multicines/cine/'+location
 	elif chain == 'movietime':
 		url = "http://www.movietime.com.pe/multicines/cine/"+location
-	r = requests.get(url).text
+	r = requests.get(url).text.encode('latin-1')
 	page = BeautifulSoup(r)
 	payload = {}
 	theater = page.find('span', {'class','titley'}).contents[0]
@@ -189,11 +189,11 @@ def scrape_cinestar_or_movietime(chain,location):
 def scrape_uvk(location):
 	url = 'http://www.uvkmulticines.com/multicines/cine/'+location
 	r = requests.get(url).text
+	page = BeautifulSoup(r, from_encoding='UTF-8')
 	
-	page = BeautifulSoup(r)
 	payload = {}
-	theateradd = page.find_all('p')[2].contents[0]
-	theaterphone = page.find_all('p')[3].contents[0]
+	theateradd = page.find_all('p')[2].renderContents()
+	theaterphone = page.find_all('p')[3].contents[0].renderContents('latin-1')
 	flavors = {" (Doblada)": '(DOB)',
 				" (Subtitulada)": "(SUB)",
 				" 3D (Doblada)": "3D (DOB)",
@@ -225,8 +225,8 @@ def scrape_uvk(location):
 		except KeyError:
 			payload[theater]['movies'][possibletitle[0][0]] = {}
 			payload[theater]['movies'][possibletitle[0][0]][possibletitle[0][1]] = times
-	return payload
 	#return payload
+	return payload
 
 
 
