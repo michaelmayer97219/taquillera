@@ -1,12 +1,16 @@
 #!/usr/bin/python
-
+# -*- coding: utf-8 -*-
 
 from locations import *
 from scrapers import *
 import json
 import time
 import pickle
+import os
+import sys
 #start = time.clock()
+
+stash = {}
 
 def nicePrint(data):
 	print(json.dumps((data), indent=3))
@@ -26,12 +30,9 @@ def nicePrint(data):
 for loc in cinestar:
 	nicePrint(scrape_cinestar(loc))"""
 
-#nicePrint(scrape_cinestar_or_movietime('cinestar', 'Metro-UNI'))
+for loc in UVK:
+	stash = dict(stash.items() + scrape_uvk(loc).items())
 
-nicePrint(scrape_uvk('UVK-LARCOMAR'))
-#print(type(scrape_uvk('UVK-LARCOMAR')))
-#print(scrape_uvk('UVK-LARCOMAR'))
-#end = time.clock()
-#print(end - start)
 
-#pickle.dump(scrape_uvk('UVK-LARCOMAR'), open('info.p', 'wb'))
+sys.setrecursionlimit(10000)
+pickle.dump(stash, open('info.p', 'wb'))

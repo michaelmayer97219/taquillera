@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -189,11 +189,11 @@ def scrape_cinestar_or_movietime(chain,location):
 def scrape_uvk(location):
 	url = 'http://www.uvkmulticines.com/multicines/cine/'+location
 	r = requests.get(url).text
-	page = BeautifulSoup(r, from_encoding='UTF-8')
+	page = BeautifulSoup(r)
 	
 	payload = {}
-	theateradd = page.find_all('p')[2].renderContents()
-	theaterphone = page.find_all('p')[3].contents[0].renderContents('latin-1')
+	theateradd = page.find_all('p')[2].contents[0].encode('utf-8')
+	#theaterphone = page.find_all('p')[3].contents[0].contents[1.encode('UTF-8')
 	flavors = {" (Doblada)": '(DOB)',
 				" (Subtitulada)": "(SUB)",
 				" 3D (Doblada)": "3D (DOB)",
@@ -201,10 +201,11 @@ def scrape_uvk(location):
 				" (HD - Subtitulada)": "(SUB)",
 				" (HD - Doblada)": "(DOB)"}
 	container = page.find('div', {'class','highslide-body'})
-	theater = container.find('h3').contents[0].split('-')[0]
+	theater = container.find('h3').contents[0].split('-')[0].encode('utf-8')
 	payload[theater] = {}
+	payload[theater]['link'] = url.encode('utf-8')
 	payload[theater]['address'] = theateradd
-	payload[theater]['phone'] = theaterphone
+	#payload[theater]['phone'] = theaterphone
 	payload[theater]['movies'] = {}
 	movies = container.find_all('a')
 	for movie in movies:

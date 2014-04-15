@@ -1,0 +1,60 @@
+body {
+	margin: 0px;
+	font-family: calibri;
+}
+#header {
+	width: 100%;
+	height: 5em;
+	background-color: #efefef;
+}
+
+#left-nav {
+	position: absolute;
+	left:0px;
+	height: 100%;
+	width: 8em;
+	border-right: 1px solid #eee;
+	
+}
+
+#content {
+	position: absolute;
+	margin-left: 8.1em;
+	padding: 2em;
+}
+
+.theater {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.theatername {
+	font-size: 1.2em;
+	text-decoration: none;
+}
+
+.showtimes {
+	xwidth: 100%;
+	xdisplay: absolute;
+	-webkit-column-count:2;
+	-moz-column-count:2;
+	column-count:2;
+	column-gap: 10px;
+}
+
+.showtimeItem {
+	xwidth: 49%;
+	xvertical-align: top;
+}
+
+.showtimeTitle {
+	text-decoration: none;
+	width: 100%;
+}
+
+.showtimeTimes {
+	display: inline-block;
+	width: 100%;
+}
+
+

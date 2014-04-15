@@ -1,9 +1,33 @@
 {% extends "index.html" %}
 {% block content %}
 <div id='theatercontainer'>
-
 {% for key in dat %} 
-	<hi> {{key}} </hi>
+	
+	<div class='theater'>
+		<div class='theaterDetails'>		
+			<a class='theatername' href="{{dat[key].link.decode('UTF-8')}}">{{key.decode('UTF-8')}}</a>
+			<div class='theateradd'>{{dat[key]['address'].decode('latin-1')}}</div>
+			<div class='theaterphone'></div>
+		</div>	
+		<div class='showtimes'>
+			{% for title in dat[key].movies %}
+				{% for flavor in dat[key]['movies'][title] %}
+					<div class='showtimeItem'>
+						<a href='' class='showtimeTitle'>{{title +' '+flavor}} </a>
+						<div class='showtimeTimes'>
+							{% for time in dat[key]['movies'][title][flavor]%}
+							<span>{{time}}</span>
+							{%endfor%}
+						</div>	
+							
+					</div>
+					
+				{%endfor%}
+				
+			{% endfor %}
+		</div>
+	</div>
+
 {%endfor%}
 
 </div>

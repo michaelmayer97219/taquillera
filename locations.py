@@ -38,3 +38,15 @@ movietime = {
 	'Chincha',
 	'Canete'
 }
+
+UVK= {
+	'UVK-Platino-Basadre-',
+	'UVK-Larcomar',
+	'UVK-CAMiNOS-DEL-iNCA',
+	'UVK-SAN-MARTIN-CENTRO',
+	'UVK-iCA',
+	'UVK-HUACHO',
+	'UVK-EL-AGUSTINO',
+	'UVK-PiURA',
+	'uvk-asia'
+}
